@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        h3,h4,p{
+            white-space: pre;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h2>网络请求的跨域解决方案</h2>
+    <p>JS采取的是同源策略</p>
+    <p>同源策略是浏览器的一项安全策略,浏览器只允许JS代码请求和当前所在服务区域名、端口、协议相同的数据接口上的数据,这就是同源策略。</p>
+    <p>也就是说,当协议、域名、端口任意一个不相同时,都会产生跨域问题,所以又应该如何解决跨域问题呢？</p>
+    <h3>跨域错误提示信息</h3>
+    <p>Access to XMLHttpRequest at'xxxxx' from origin 'xxxx' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the request resolve.</p>
+    <h3>目前主流的跨域解决方案有两种</h3>
+    <ol>
+        <li>后台解决: cors</li>
+        <li>前台解决: proxy</li>
+    </ol>
+    <p>在vue.config.js里面
+module.exports = defineConfig({
+            transpileDependencies: true,
+            下面加上
+            devServer: {
+              proxy: {
+                '/api': {
+                  target: 'http://localhost:3000',
+                  changeOrigin: true
+                }
+              }
+            }
+          })
+    </p>
+    <p>
+        import axios from 'axios';
+
+// "https://jsonplaceholder.typicode.com/posts/1"
+export default {
+  name: 'HelloWorld',
+  mounted(){
+    axios.get("/api/data").then(res =>{
+      console.log(res.data);
+    });
+  },
+}
+    </p>
+    <h3>自己建一个简单的服务器</h3>
+    <p>
+      安装Node.js和Express:
+
+如果你还没有安装Node.js,请从 Node.js官网 下载并安装。
+打开命令行或终端,运行以下命令来安装Express:
+sh
+npm install -g express
+创建一个简单的HTTP服务器:
+
+在你的项目目录中，创建一个名为 server.js 的文件，并添加以下代码：
+javascript
+const express = require('express');
+const app = express();
+
+app.get('/api/data', (req, res) => {
+  res.json({ message: '这是没有CORS支持的响应' });
+});
+
+const port = 3000;
+app.listen(port, () => {
+  console.log(`服务器运行在 http://localhost:${port}`);
+});
+运行服务器：
+
+在命令行或终端中，运行以下命令来启动服务器：
+sh
+node server.js
+现在，你可以通过访问 http://localhost:3000/api/data 来测试跨域请求。由于服务器没有设置CORS头部,你的浏览器会显示跨域错误。
+    </p>
+
+</body>
+</html>
